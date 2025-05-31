@@ -48,6 +48,7 @@ def parse_args():
     parser.add_argument("--concurrency", type=int, default=4, help="Max concurrent downloads (default: 4)")
     parser.add_argument("--skip", type=int, default=0, help="Number of initial media messages to skip (default: 0)")
     parser.add_argument("--limit", type=int, default=None, help="Maximum number of media messages to download after skipping")
+    parser.add_argument("--yes", action="store_true", help="This is will skip continue download question")
     return parser.parse_args()
 
 def get_media_size(message):
@@ -200,11 +201,12 @@ async def main():
     print(f"Total size to be downloaded: {total_bytes} bytes (~{total_mb:.2f} MB)")
 
     # Prompt the user to confirm before downloading
-#    confirmation = input("Do you want to continue with the download? (y/n): ")
- #   if not confirmation.lower().startswith('y'):
-  #      print("Download cancelled.")
-   #     await client.disconnect()
-    #    sys.exit(0)
+    if not args.yes :
+        confirmation = input("Do you want to continue with the download? (y/n): ")
+        if not confirmation.lower().startswith('y'):
+            print("Download cancelled.")
+            await client.disconnect()
+            sys.exit(0)
 
     print(f"Found {total_messages} messages with media, downloading {len(messages)} messages (from {start+1} to {end}) with concurrency={args.concurrency}...")
 
